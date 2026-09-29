@@ -47,29 +47,41 @@ st.markdown(
       .muted {opacity:.72; font-size:.9rem;}
 
       /* กล่องผู้พัฒนา */
-      .developer-box {
+      .developer-card {
+        margin-top: 14px;
+        padding: 16px 10px 14px 10px;
+        border: 1px solid rgba(100, 116, 139, 0.20);
+        border-radius: 18px;
+        background: rgba(248, 250, 252, 0.75);
         text-align: center;
-        padding: 10px 5px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
       }
-
-      .developer-image {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
+      .developer-title {
+        font-weight: 700;
+        font-size: 16px;
+        margin: 4px 0 12px 0;
       }
       .developer-name {
-        font-weight: 600;
-        font-size: 15px;
-        margin-top: 8px;
+        font-weight: 650;
+        font-size: 14px;
+        margin-top: 10px;
+        line-height: 1.4;
       }
       .developer-id {
-        font-size: 13px;
-        opacity: 0.7;
+        font-size: 12px;
+        opacity: 0.65;
+        margin-top: 3px;
+      }
+      [data-testid="stSidebar"] [data-testid="stImage"] {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+      }
+      [data-testid="stSidebar"] [data-testid="stImage"] img {
+        border-radius: 14px;
+        border: 1px solid rgba(100, 116, 139, 0.18);
+        display: block;
+        margin: 0 auto;
       }
     </style>
     """,
@@ -142,32 +154,26 @@ with st.sidebar:
     # ==============================
     # 👨‍💻 ข้อมูลผู้พัฒนา
     # ==============================
-    st.markdown("---")
-
     st.markdown(
         """
-        <div class="developer-box">
-            <div style="font-size:22px;">👨‍💻</div>
-            <div class="developer-name">ผู้พัฒนาระบบ</div>
-        </div>
+        <div class="developer-card">
+            <div style="font-size:20px;">👨‍💻</div>
+            <div class="developer-title">ผู้พัฒนาระบบ</div>
         """,
         unsafe_allow_html=True,
     )
 
-    # รูปผู้พัฒนาอยู่โฟลเดอร์เดียวกับ app.py
-    st.markdown('<div class="developer-image">', unsafe_allow_html=True)
-    st.image("developer.png", width=150)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.image("developer.png", width=130)
 
     st.markdown(
         """
-        <div class="developer-box">
             <div class="developer-name">GraphBook Recommendation System</div>
             <div class="developer-id">รหัสนักศึกษา: 664245011</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
+
 
 
 st.markdown(
