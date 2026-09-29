@@ -166,7 +166,7 @@ with st.sidebar:
         st.markdown(
             """
             <div class="developer-info">
-                <div class="developer-name">GraphBook Recommendation System</div>
+                <div class="developer-name">นายทินภัทร ช้อยสามนาค</div>
                 <div class="developer-id">รหัสนักศึกษา: 664245011</div>
             </div>
             """,
