@@ -143,8 +143,8 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-    # ใส่รูปผู้พัฒนาไว้ที่ docs/developer.jpg
-    st.image("docs/developer.jpg", width=150)
+    # รูปผู้พัฒนาอยู่โฟลเดอร์เดียวกับ app.py
+    st.image("developer.png", width=150)
 
     st.markdown(
         """
