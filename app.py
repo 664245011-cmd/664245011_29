@@ -45,6 +45,21 @@ st.markdown(
         background:#0f766e; color:white; font-size:.8rem; font-weight:700;
       }
       .muted {opacity:.72; font-size:.9rem;}
+
+      /* กล่องผู้พัฒนา */
+      .developer-box {
+        text-align: center;
+        padding: 10px 5px;
+      }
+      .developer-name {
+        font-weight: 600;
+        font-size: 15px;
+        margin-top: 8px;
+      }
+      .developer-id {
+        font-size: 13px;
+        opacity: 0.7;
+      }
     </style>
     """,
     unsafe_allow_html=True,
@@ -97,12 +112,50 @@ require_connection()
 with st.sidebar:
     st.markdown("## 📚 GraphBook")
     st.caption("Neo4j Aura + Streamlit")
+
     page = st.radio(
         "เมนู",
-        ["Dashboard", "Recommendations", "Book Search", "Borrow / Rate", "Graph Explorer", "Admin / Setup"],
+        [
+            "Dashboard",
+            "Recommendations",
+            "Book Search",
+            "Borrow / Rate",
+            "Graph Explorer",
+            "Admin / Setup",
+        ],
     )
+
     st.divider()
     st.caption("Bachelor-level Graph Database Project")
+
+    # ==============================
+    # 👨‍💻 ข้อมูลผู้พัฒนา
+    # ==============================
+    st.markdown("---")
+
+    st.markdown(
+        """
+        <div class="developer-box">
+            <div style="font-size:22px;">👨‍💻</div>
+            <div class="developer-name">ผู้พัฒนาระบบ</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # ใส่รูปผู้พัฒนาไว้ที่ docs/developer.jpg
+    st.image("docs/developer.jpg", width=150)
+
+    st.markdown(
+        """
+        <div class="developer-box">
+            <div class="developer-name">GraphBook Recommendation System</div>
+            <div class="developer-id">รหัสนักศึกษา: 664245011</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 st.markdown(
     """
@@ -126,7 +179,7 @@ if page == "Dashboard":
     st.divider()
     student_id = student_selector("dash_student")
     profile = get_profile(student_id)
-    
+
     if profile:
         left, right = st.columns([1, 2])
         with left:
@@ -138,7 +191,11 @@ if page == "Dashboard":
         with right:
             st.markdown("### ประวัติการยืม")
             if profile["borrowed"]:
-                st.dataframe(pd.DataFrame(profile["borrowed"]), use_container_width=True, hide_index=True)
+                st.dataframe(
+                    pd.DataFrame(profile["borrowed"]),
+                    use_container_width=True,
+                    hide_index=True,
+                )
             else:
                 st.info("ยังไม่มีประวัติการยืม")
 
@@ -148,12 +205,17 @@ elif page == "Recommendations":
     top_n = st.slider("จำนวนคำแนะนำ", 3, 12, 6)
     rows = recommend_books(student_id, top_n)
 
-    st.caption("คะแนนตัวอย่าง = เพื่อน × 3 + หมวดความสนใจ × 2 + ความนิยม × 0.20 + rating เฉลี่ย × 0.50")
+    st.caption(
+        "คะแนนตัวอย่าง = เพื่อน × 3 + หมวดความสนใจ × 2 + ความนิยม × 0.20 + rating เฉลี่ย × 0.50"
+    )
+
     if not rows:
         st.info("ยังไม่มีคำแนะนำสำหรับผู้ใช้นี้")
+
     for i, row in enumerate(rows, start=1):
         authors = ", ".join(row.get("authors") or []) or "ไม่ระบุผู้แต่ง"
         categories = ", ".join(row.get("categories") or []) or "ไม่ระบุหมวด"
+
         st.markdown(
             f"""
             <div class="book-card">
@@ -169,38 +231,86 @@ elif page == "Recommendations":
 elif page == "Book Search":
     st.subheader("🔎 ค้นหาหนังสือ")
     c1, c2 = st.columns([2, 1])
-    keyword = c1.text_input("ชื่อหนังสือหรือผู้แต่ง", placeholder="เช่น Python, Neo4j, Kanya")
+
+    keyword = c1.text_input(
+        "ชื่อหนังสือหรือผู้แต่ง",
+        placeholder="เช่น Python, Neo4j, Kanya",
+    )
+
     categories = [""] + list_categories()
-    category = c2.selectbox("หมวด", categories, format_func=lambda x: "ทุกหมวด" if x == "" else x)
+    category = c2.selectbox(
+        "หมวด",
+        categories,
+        format_func=lambda x: "ทุกหมวด" if x == "" else x,
+    )
+
     rows = search_books(keyword, category)
+
     st.write(f"พบ {len(rows)} รายการ")
-    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+    st.dataframe(
+        pd.DataFrame(rows),
+        use_container_width=True,
+        hide_index=True,
+    )
 
 elif page == "Borrow / Rate":
     st.subheader("📝 บันทึกการยืมและให้คะแนน")
+
     student_id = student_selector("borrow_student")
     books = search_books()
+
     if not books:
         st.info("ยังไม่มีหนังสือ")
         st.stop()
-    book_labels = {f"{b['book_id']} — {b['title']}": b["book_id"] for b in books}
+
+    book_labels = {
+        f"{b['book_id']} — {b['title']}": b["book_id"]
+        for b in books
+    }
+
     selected = st.selectbox("หนังสือ", list(book_labels))
     borrow_date = st.date_input("วันที่ยืม", value=date.today())
     use_rating = st.checkbox("ให้คะแนนพร้อมกัน")
-    rating = st.slider("คะแนน", 1.0, 5.0, 4.0, 0.5, disabled=not use_rating)
-    if st.button("บันทึก", type="primary", use_container_width=True):
-        record_borrow(student_id, book_labels[selected], borrow_date.isoformat(), rating if use_rating else None)
+    rating = st.slider(
+        "คะแนน",
+        1.0,
+        5.0,
+        4.0,
+        0.5,
+        disabled=not use_rating,
+    )
+
+    if st.button(
+        "บันทึก",
+        type="primary",
+        use_container_width=True,
+    ):
+        record_borrow(
+            student_id,
+            book_labels[selected],
+            borrow_date.isoformat(),
+            rating if use_rating else None,
+        )
+
         st.success("บันทึกความสัมพันธ์ BORROWED แล้ว")
 
 elif page == "Graph Explorer":
     st.subheader("🕸️ Graph Explorer")
+
     student_id = student_selector("graph_student")
     rows = graph_neighborhood(student_id)
+
     if not rows:
         st.info("ยังไม่มี neighborhood graph")
     else:
-        dot = ["digraph G {", 'rankdir="LR";', 'node [shape=box, style="rounded,filled", fillcolor="#f8fafc"];']
+        dot = [
+            "digraph G {",
+            'rankdir="LR";',
+            'node [shape=box, style="rounded,filled", fillcolor="#f8fafc"];',
+        ]
+
         seen_nodes = set()
+
         for r in rows:
             for nid, label, name in [
                 (r["source_id"], r["source_label"], r["source_name"]),
@@ -208,17 +318,37 @@ elif page == "Graph Explorer":
             ]:
                 if nid not in seen_nodes:
                     safe_name = str(name).replace('"', "'")
-                    dot.append(f'"{nid}" [label="{safe_name}\\n:{label}"];')
+                    dot.append(
+                        f'"{nid}" [label="{safe_name}\\n:{label}"];'
+                    )
                     seen_nodes.add(nid)
-            dot.append(f'"{r["source_id"]}" -> "{r["target_id"]}" [label="{r["relationship"]}"];')
+
+            dot.append(
+                f'"{r["source_id"]}" -> "{r["target_id"]}" '
+                f'[label="{r["relationship"]}"];'
+            )
+
         dot.append("}")
-        st.graphviz_chart("\n".join(dot), use_container_width=True)
+
+        st.graphviz_chart(
+            "\n".join(dot),
+            use_container_width=True,
+        )
+
         with st.expander("ดูข้อมูล edge ที่ใช้วาดกราฟ"):
-            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+            st.dataframe(
+                pd.DataFrame(rows),
+                use_container_width=True,
+                hide_index=True,
+            )
 
 elif page == "Admin / Setup":
     st.subheader("⚙️ Setup ข้อมูลตัวอย่าง")
-    st.warning("ปุ่มนี้ไม่ลบข้อมูลเดิม และใช้ MERGE จึงสามารถกดซ้ำได้")
+
+    st.warning(
+        "ปุ่มนี้ไม่ลบข้อมูลเดิม และใช้ MERGE จึงสามารถกดซ้ำได้"
+    )
+
     st.markdown(
         """
         **Graph schema**
@@ -229,8 +359,14 @@ elif page == "Admin / Setup":
         - `(:Author)-[:WROTE]->(:Book)`
         """
     )
-    if st.button("สร้าง Constraint + Demo Data", type="primary", use_container_width=True):
+
+    if st.button(
+        "สร้าง Constraint + Demo Data",
+        type="primary",
+        use_container_width=True,
+    ):
         with st.spinner("กำลังสร้างข้อมูล..."):
             seed_demo_data()
+
         st.success("สร้างข้อมูลตัวอย่างเรียบร้อยแล้ว")
         st.rerun()
