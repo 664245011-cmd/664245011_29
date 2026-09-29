@@ -50,6 +50,17 @@ st.markdown(
       .developer-box {
         text-align: center;
         padding: 10px 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .developer-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
       }
       .developer-name {
         font-weight: 600;
@@ -144,7 +155,9 @@ with st.sidebar:
     )
 
     # รูปผู้พัฒนาอยู่โฟลเดอร์เดียวกับ app.py
+    st.markdown('<div class="developer-image">', unsafe_allow_html=True)
     st.image("developer.png", width=150)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown(
         """
