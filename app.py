@@ -46,13 +46,8 @@ st.markdown(
       }
       .muted {opacity:.72; font-size:.9rem;}
 
-      /* กล่องผู้พัฒนา */
-      .developer-card {
-        margin-top: 14px;
-        padding: 16px 10px 14px 10px;
-        border: 1px solid rgba(100, 116, 139, 0.20);
-        border-radius: 18px;
-        background: rgba(248, 250, 252, 0.75);
+      /* กล่องผู้พัฒนา (จัดกึ่งกลาง) */
+      .developer-head, .developer-info {
         text-align: center;
       }
       .developer-title {
@@ -75,12 +70,10 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 0 auto;
       }
       [data-testid="stSidebar"] [data-testid="stImage"] img {
         border-radius: 14px;
         border: 1px solid rgba(100, 116, 139, 0.18);
-        display: block;
         margin: 0 auto;
       }
     </style>
@@ -154,26 +147,31 @@ with st.sidebar:
     # ==============================
     # 👨‍💻 ข้อมูลผู้พัฒนา
     # ==============================
-    st.markdown(
-        """
-        <div class="developer-card">
-            <div style="font-size:20px;">👨‍💻</div>
-            <div class="developer-title">ผู้พัฒนาระบบ</div>
-        """,
-        unsafe_allow_html=True,
-    )
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div class="developer-head">
+                <div style="font-size:20px;">👨‍💻</div>
+                <div class="developer-title">ผู้พัฒนาระบบ</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    st.image("developer.png", width=130)
+        # คอลัมน์ซ้าย-ขวาว่างเท่ากัน ทำให้รูปอยู่กึ่งกลาง
+        _, mid, _ = st.columns([1, 3, 1])
+        with mid:
+            st.image("developer.png", use_container_width=True)
 
-    st.markdown(
-        """
-            <div class="developer-name">GraphBook Recommendation System</div>
-            <div class="developer-id">รหัสนักศึกษา: 664245011</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
+        st.markdown(
+            """
+            <div class="developer-info">
+                <div class="developer-name">GraphBook Recommendation System</div>
+                <div class="developer-id">รหัสนักศึกษา: 664245011</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 
 st.markdown(
